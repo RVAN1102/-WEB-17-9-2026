@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>BaVan Shop - Quản lý Danh mục</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bs-font-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --surface-card: #ffffff;
+            --border-color: #e2e8f0;
+        }
+        body {
+            font-family: var(--bs-font-sans-serif);
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+        .navbar-custom {
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff !important;
+        }
+        .nav-link {
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 6px 14px !important;
+            transition: all 0.2s ease;
+        }
+        .nav-link.active {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: #60a5fa !important;
+            font-weight: 600;
+        }
+        .nav-link:hover:not(.active) {
+            background-color: rgba(255,255,255,0.06);
+            color: #f1f5f9 !important;
+        }
+        .dashboard-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        .table-custom-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+        }
+        .table-custom thead th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 16px;
+            white-space: nowrap;
+        }
+        .table-custom tbody td {
+            padding: 14px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .table-custom tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .category-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .category-icon-box:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+        .category-icon-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .preview-box {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e1;
+            padding: 4px;
+            display: none;
+        }
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border-color: #cbd5e1;
+            padding: 0.55rem 0.85rem;
+            font-size: 0.92rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4 shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <div class="bg-primary text-white rounded-3 p-2 me-2 d-inline-flex align-items-center justify-content-center" style="width:34px;height:34px;">
+                    <i class="fa-solid fa-bag-shopping" style="font-size: 16px;"></i>
+                </div>
+                <span>BaVan Shop</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill ms-2 fw-semibold" style="font-size: 11px;">Admin</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/categories"><i class="fa-solid fa-tags me-1.5"></i> Quản lý Danh mục</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/products"><i class="fa-solid fa-boxes-stacked me-1.5"></i> Quản lý Sản phẩm</a>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="/swagger-ui.html" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-code me-1 text-success"></i> Swagger 3 UI
+                    </a>
+                    <a href="/h2-console" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-database me-1 text-warning"></i> H2 Console
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container-fluid px-4">
+        <!-- Toast Notification -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+            <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-medium" id="toastMessage">Thông báo!</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <h3 class="fw-bold text-dark mb-1 d-flex align-items-center">
+                    <i class="fa-solid fa-folder-tree text-primary me-2"></i>Quản lý Danh mục
+                </h3>
+                <p class="text-secondary mb-0 small">Phân loại và cấu hình nhóm ngành hàng kinh doanh của cửa hàng</p>
+            </div>
+            <div>
+                <button class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm" onclick="showAddModal()">
+                    <i class="fa-solid fa-plus me-1.5"></i> Thêm Danh Mục Mới
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Metrics Summary Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-primary-subtle text-primary">
+                        <i class="fa-solid fa-folder-tree"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Tổng Danh Mục</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiTotalCategories">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-success-subtle text-success">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Đang Hoạt Động</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiActiveCategories">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-subtle text-purple" style="background-color: #f3e8ff; color: #9333ea;">
+                        <i class="fa-solid fa-icons"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Biểu Tượng Đã Cấu Hình</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiIconCategories">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar Card -->
+        <div class="dashboard-card p-3 mb-4">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" id="searchKeyword" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm theo tên danh mục..." autocomplete="off">
+                        <button class="btn btn-primary rounded-end-3 px-3" type="button" onclick="handleSearch()">Tìm kiếm</button>
+                    </div>
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <select id="pageSizeSelect" class="form-select" onchange="changePageSize()">
+                        <option value="3">3 mục / trang</option>
+                        <option value="5" selected>5 mục / trang</option>
+                        <option value="10">10 mục / trang</option>
+                    </select>
+                </div>
+                <div class="col-md-3 col-lg-5 d-flex gap-2 justify-content-between align-items-center">
+                    <button class="btn btn-outline-secondary rounded-pill px-3" type="button" onclick="resetSearch()">
+                        <i class="fa-solid fa-rotate-left me-1"></i> Đặt lại
+                    </button>
+                    <div class="text-secondary small fw-medium" id="totalInfoText">
+                        Đang nạp dữ liệu...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Data Card -->
+        <div class="table-custom-container mb-4">
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;" class="text-center">ID</th>
+                            <th style="width: 120px;" class="text-center">Biểu tượng</th>
+                            <th>Tên danh mục</th>
+                            <th class="text-center" style="width: 180px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải dữ liệu qua AJAX...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light-subtle">
+                <div id="paginationSummary" class="text-muted small fw-medium"></div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0" id="paginationNav"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Category -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="addCategoryForm" enctype="multipart/form-data">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-plus-circle me-1"></i> Thêm Category Mới</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="newCategoryName" class="form-label fw-bold">Tên Danh Mục <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="newCategoryName" name="categoryName" required placeholder="Ví dụ: Thiết bị thông minh">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newIconFile" class="form-label fw-bold">File Icon / Hình ảnh</label>
+                            <input type="file" class="form-control" id="newIconFile" name="icon" accept="image/*" onchange="previewSelectedImage(this, '#newIconPreview')">
+                            <div class="mt-2 text-center">
+                                <img id="newIconPreview" class="preview-box" alt="Icon Preview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" id="btnAddSubmit">
+                            <i class="fa-solid fa-save me-1"></i> Thêm Mới
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sửa Category -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editCategoryForm" enctype="multipart/form-data">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title"><i class="fa-solid fa-pen-to-square me-1"></i> Cập Nhật Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editCategoryId" name="categoryId">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category ID</label>
+                            <input type="text" class="form-control bg-light" id="displayCategoryId" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategoryName" class="form-label fw-bold">Tên Danh Mục <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editCategoryName" name="categoryName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editIconFile" class="form-label fw-bold">Chọn Icon mới (để trống nếu giữ nguyên)</label>
+                            <input type="file" class="form-control" id="editIconFile" name="icon" accept="image/*" onchange="previewSelectedImage(this, '#editIconPreview')">
+                            <div class="mt-2 text-center">
+                                <p class="small text-muted mb-1">Ảnh hiện tại / xem trước:</p>
+                                <img id="editIconPreview" class="preview-box" alt="Icon Preview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-warning" id="btnEditSubmit">
+                            <i class="fa-solid fa-check me-1"></i> Cập Nhật
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery 3.6.4 & Bootstrap 5 Bundle JS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // State management
+        var currentPage = 0;
+        var pageSize = 5;
+        var currentKeyword = '';
+
+        // Initialize on DOM ready
+        $(document).ready(function() {
+            loadCategories(0);
+
+            // Search on enter key
+            $('#searchKeyword').on('keypress', function(e) {
+                if (e.which === 13) {
+                    handleSearch();
+                }
+            });
+
+            // Submit Add Category Form via AJAX
+            $('#addCategoryForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $('#btnAddSubmit').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...');
+
+                $.ajax({
+                    url: '/api/category/addCategory',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#addCategoryModal').modal('hide');
+                        $('#addCategoryForm')[0].reset();
+                        $('#newIconPreview').hide();
+                        showToast(response.message || 'Thêm Category thành công!', 'bg-success');
+                        loadCategories(0);
+                    },
+                    error: function(xhr) {
+                        var msg = 'Thêm Category thất bại!';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        showToast(msg, 'bg-danger');
+                    },
+                    complete: function() {
+                        $('#btnAddSubmit').prop('disabled', false).html('<i class="fa-solid fa-save me-1"></i> Thêm Mới');
+                    }
+                });
+            });
+
+            // Submit Edit Category Form via AJAX
+            $('#editCategoryForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $('#btnEditSubmit').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang cập nhật...');
+
+                $.ajax({
+                    url: '/api/category/updateCategory',
+                    type: 'PUT',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#editCategoryModal').modal('hide');
+                        showToast(response.message || 'Cập nhật Category thành công!', 'bg-success');
+                        loadCategories(currentPage);
+                    },
+                    error: function(xhr) {
+                        var msg = 'Cập nhật thất bại!';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        showToast(msg, 'bg-danger');
+                    },
+                    complete: function() {
+                        $('#btnEditSubmit').prop('disabled', false).html('<i class="fa-solid fa-check me-1"></i> Cập Nhật');
+                    }
+                });
+            });
+        });
+
+        // Load Categories with Pagination & Search via AJAX
+        function loadCategories(page) {
+            currentPage = page;
+            pageSize = parseInt($('#pageSizeSelect').val());
+            currentKeyword = $('#searchKeyword').val().trim();
+
+            var url = '/api/category/page?page=' + currentPage + '&size=' + pageSize + '&keyword=' + encodeURIComponent(currentKeyword);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var pageData = response.body || {};
+                    var items = pageData.content || (pageData.page && pageData.page.content) || [];
+                    renderTable(items);
+                    renderPagination(pageData);
+                    updateKPIs();
+                },
+                error: function(xhr) {
+                    $('#categoryTableBody').html('<tr><td colspan="4" class="text-center text-danger py-4">Không thể kết nối tới máy chủ!</td></tr>');
+                    showToast('Lỗi khi tải dữ liệu Category!', 'bg-danger');
+                }
+            });
+        }
+
+        // Update KPI Metrics Cards
+        function updateKPIs() {
+            $.ajax({
+                url: '/api/category',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var allCats = response.body || response || [];
+                    $('#kpiTotalCategories').text(allCats.length);
+                    $('#kpiActiveCategories').text(allCats.length);
+                    var iconCount = 0;
+                    for (var i = 0; i < allCats.length; i++) {
+                        if (allCats[i].icon && allCats[i].icon.trim() !== '') {
+                            iconCount++;
+                        }
+                    }
+                    $('#kpiIconCategories').text(iconCount);
+                }
+            });
+        }
+
+        // Render Table Rows
+        function renderTable(items) {
+            var tbody = $('#categoryTableBody');
+            tbody.empty();
+
+            if (!items || items.length === 0) {
+                tbody.html('<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fa-solid fa-inbox fa-2x mb-3 text-secondary d-block"></i>Không tìm thấy danh mục nào phù hợp</td></tr>');
+                return;
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var iconHtml = '';
+                if (item.icon && item.icon.trim() !== '') {
+                    var imgSrc = item.icon;
+                    if (imgSrc.startsWith('http://') || imgSrc.startsWith('https://')) {
+                        var idx = imgSrc.indexOf('/plain/https://');
+                        if (idx !== -1) {
+                            imgSrc = imgSrc.substring(idx + 7);
+                        }
+                    } else if (!imgSrc.startsWith('/uploads/')) {
+                        imgSrc = '/uploads/' + imgSrc;
+                    }
+                    iconHtml = '<div class="category-icon-box mx-auto"><img src="' + imgSrc + '" alt="icon" onerror="this.onerror=null;this.src=\'https://placehold.co/56x56/f1f5f9/475569?text=Icon\';"></div>';
+                } else {
+                    iconHtml = '<div class="category-icon-box mx-auto text-muted"><i class="fa-solid fa-folder"></i></div>';
+                }
+
+                var row = $('<tr>');
+                row.append('<td class="text-center"><span class="badge bg-light text-primary border rounded-pill px-2.5 py-1 fw-bold">#' + item.categoryId + '</span></td>');
+                row.append('<td class="text-center">' + iconHtml + '</td>');
+                row.append('<td><div class="fw-bold text-dark" style="font-size: 0.95rem;">' + escapeHtml(item.categoryName) + '</div><div class="text-secondary small">Mã định danh hệ thống: CAT-' + item.categoryId + '</div></td>');
+                row.append('<td class="text-center">' +
+                    '<button class="btn btn-outline-primary btn-sm rounded-pill px-2.5 py-1 me-1 shadow-sm fw-semibold" onclick="showEditModal(' + item.categoryId + ')" title="Chỉnh sửa">' +
+                        '<i class="fa-solid fa-pen-to-square me-1"></i>Sửa' +
+                    '</button>' +
+                    '<button class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-1 shadow-sm fw-semibold" onclick="deleteCategory(' + item.categoryId + ', \'' + escapeHtml(item.categoryName) + '\')" title="Xóa danh mục">' +
+                        '<i class="fa-solid fa-trash-can me-1"></i>Xóa' +
+                    '</button>' +
+                '</td>');
+
+                tbody.append(row);
+            }
+        }
+
+        // Render Pagination Controls
+        function renderPagination(pageData) {
+            var nav = $('#paginationNav');
+            nav.empty();
+
+            var totalPages = pageData.totalPages !== undefined ? pageData.totalPages : (pageData.page ? pageData.page.totalPages : 1);
+            var totalElements = pageData.totalElements !== undefined ? pageData.totalElements : (pageData.page ? pageData.page.totalElements : 0);
+            var cur = pageData.number !== undefined ? pageData.number : (pageData.page ? pageData.page.number : 0);
+
+            $('#totalInfoText').text('Tổng cộng: ' + totalElements + ' danh mục');
+            $('#paginationSummary').text('Trang ' + (totalPages === 0 ? 0 : cur + 1) + ' / ' + totalPages + ' (Tổng số ' + totalElements + ' bản ghi)');
+
+            if (totalPages <= 1) return;
+
+            // First & Prev buttons
+            nav.append('<li class="page-item ' + (cur === 0 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadCategories(0)"><i class="fa-solid fa-angles-left"></i></a></li>');
+            nav.append('<li class="page-item ' + (cur === 0 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadCategories(' + (cur - 1) + ')"><i class="fa-solid fa-angle-left"></i></a></li>');
+
+            // Page numbers
+            var startPage = Math.max(0, cur - 2);
+            var endPage = Math.min(totalPages - 1, cur + 2);
+
+            for (var p = startPage; p <= endPage; p++) {
+                nav.append('<li class="page-item ' + (p === cur ? 'active' : '') + '">' +
+                    '<a class="page-link" onclick="loadCategories(' + p + ')">' + (p + 1) + '</a></li>');
+            }
+
+            // Next & Last buttons
+            nav.append('<li class="page-item ' + (cur >= totalPages - 1 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadCategories(' + (cur + 1) + ')"><i class="fa-solid fa-angle-right"></i></a></li>');
+            nav.append('<li class="page-item ' + (cur >= totalPages - 1 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadCategories(' + (totalPages - 1) + ')"><i class="fa-solid fa-angles-right"></i></a></li>');
+        }
+
+        // Search Handlers
+        function handleSearch() {
+            loadCategories(0);
+        }
+
+        function resetSearch() {
+            $('#searchKeyword').val('');
+            loadCategories(0);
+        }
+
+        function changePageSize() {
+            loadCategories(0);
+        }
+
+        // Open Add Modal
+        function showAddModal() {
+            $('#addCategoryForm')[0].reset();
+            $('#newIconPreview').hide();
+            $('#addCategoryModal').modal('show');
+        }
+
+        // Open Edit Modal & Fetch Data via AJAX
+        function showEditModal(id) {
+            $.ajax({
+                url: '/api/category/' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status && response.body) {
+                        var cat = response.body;
+                        $('#editCategoryId').val(cat.categoryId);
+                        $('#displayCategoryId').val(cat.categoryId);
+                        $('#editCategoryName').val(cat.categoryName);
+
+                        if (cat.icon && cat.icon.trim() !== '') {
+                            var src = cat.icon.startsWith('http') ? cat.icon : '/uploads/' + cat.icon;
+                            $('#editIconPreview').attr('src', src).show();
+                        } else {
+                            $('#editIconPreview').hide();
+                        }
+
+                        $('#editIconFile').val('');
+                        $('#editCategoryModal').modal('show');
+                    } else {
+                        showToast('Không tìm thấy Category!', 'bg-danger');
+                    }
+                },
+                error: function() {
+                    showToast('Lỗi khi lấy thông tin Category!', 'bg-danger');
+                }
+            });
+        }
+
+        // Delete Category via AJAX
+        function deleteCategory(id, name) {
+            if (confirm('Bạn có chắc chắn muốn xóa danh mục: "' + name + '" (ID: ' + id + ') không?')) {
+                $.ajax({
+                    url: '/api/category/deleteCategory?categoryId=' + id,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function(response) {
+                        showToast(response.message || 'Xóa thành công!', 'bg-success');
+                        loadCategories(currentPage);
+                    },
+                    error: function(xhr) {
+                        var msg = 'Xóa danh mục thất bại!';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        showToast(msg, 'bg-danger');
+                    }
+                });
+            }
+        }
+
+        // Preview image selection helper
+        function previewSelectedImage(input, previewSelector) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $(previewSelector).attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Toast Helper
+        function showToast(message, bgClass) {
+            var toastEl = $('#liveToast');
+            toastEl.removeClass('bg-success bg-danger bg-warning bg-info').addClass(bgClass);
+            $('#toastMessage').text(message);
+            var toast = new bootstrap.Toast(toastEl[0]);
+            toast.show();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

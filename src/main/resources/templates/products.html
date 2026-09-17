@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>BaVan Shop - Quản lý Sản phẩm</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bs-font-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --surface-card: #ffffff;
+            --border-color: #e2e8f0;
+        }
+        body {
+            font-family: var(--bs-font-sans-serif);
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+        .navbar-custom {
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff !important;
+        }
+        .nav-link {
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 6px 14px !important;
+            transition: all 0.2s ease;
+        }
+        .nav-link.active {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: #60a5fa !important;
+            font-weight: 600;
+        }
+        .nav-link:hover:not(.active) {
+            background-color: rgba(255,255,255,0.06);
+            color: #f1f5f9 !important;
+        }
+        .dashboard-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        .table-custom-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+        }
+        .table-custom thead th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 16px;
+            white-space: nowrap;
+        }
+        .table-custom tbody td {
+            padding: 14px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .table-custom tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .main-thumb {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 3px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+        }
+        .main-thumb:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border-color: #93c5fd;
+        }
+        .thumb-strip {
+            display: flex;
+            gap: 4px;
+            margin-top: 5px;
+        }
+        .thumb-mini {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            background-color: #ffffff;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            padding: 1px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .thumb-mini:hover {
+            border-color: #2563eb;
+            transform: scale(1.18);
+        }
+        .gallery-preview-img {
+            width: 68px;
+            height: 68px;
+            object-fit: contain;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 3px;
+        }
+        .carousel-item img {
+            max-height: 500px;
+            object-fit: contain;
+            margin: auto;
+            background-color: transparent;
+        }
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border-color: #cbd5e1;
+            padding: 0.55rem 0.85rem;
+            font-size: 0.92rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4 shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <div class="bg-primary text-white rounded-3 p-2 me-2 d-inline-flex align-items-center justify-content-center" style="width:34px;height:34px;">
+                    <i class="fa-solid fa-bag-shopping" style="font-size: 16px;"></i>
+                </div>
+                <span>BaVan Shop</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill ms-2 fw-semibold" style="font-size: 11px;">Admin</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/categories"><i class="fa-solid fa-tags me-1.5"></i> Quản lý Danh mục</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/products"><i class="fa-solid fa-boxes-stacked me-1.5"></i> Quản lý Sản phẩm</a>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="/swagger-ui.html" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-code me-1 text-success"></i> Swagger 3 UI
+                    </a>
+                    <a href="/h2-console" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-database me-1 text-warning"></i> H2 Console
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid px-4">
+        <!-- Toast Notification -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+            <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-medium" id="toastMessage">Thông báo!</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <h3 class="fw-bold text-dark mb-1 d-flex align-items-center">
+                    <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>Quản lý Sản phẩm
+                </h3>
+                <p class="text-secondary mb-0 small">Hệ thống quản lý thông tin danh mục, tồn kho và hình ảnh sản phẩm</p>
+            </div>
+            <div>
+                <button class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm" onclick="showAddModal()">
+                    <i class="fa-solid fa-plus me-1.5"></i> Thêm Sản Phẩm Mới
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Metrics Summary Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-primary-subtle text-primary">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Tổng Sản Phẩm</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiTotalProducts">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-success-subtle text-success">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Đang Bán</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiActiveProducts">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-warning-subtle text-warning">
+                        <i class="fa-solid fa-cubes-stacked"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Tổng Tồn Kho</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiTotalStock">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-subtle text-purple" style="background-color: #f3e8ff; color: #9333ea;">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-medium">Ngành Hàng</div>
+                        <div class="fs-4 fw-bold text-dark" id="kpiTotalCategories">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar Card -->
+        <div class="dashboard-card p-3 mb-4">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-4 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" id="searchKeyword" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm theo tên sản phẩm..." autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <select id="filterCategorySelect" class="form-select" onchange="handleSearch()">
+                        <option value="">-- Tất cả ngành hàng --</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <select id="pageSizeSelect" class="form-select" onchange="changePageSize()">
+                        <option value="3">3 sp / trang</option>
+                        <option value="5" selected>5 sp / trang</option>
+                        <option value="10">10 sp / trang</option>
+                    </select>
+                </div>
+                <div class="col-md-3 col-lg-3 d-flex gap-2 justify-content-end">
+                    <button class="btn btn-primary rounded-pill px-3" type="button" onclick="handleSearch()">
+                        <i class="fa-solid fa-filter me-1"></i> Lọc
+                    </button>
+                    <button class="btn btn-outline-secondary rounded-pill px-3" type="button" onclick="resetSearch()">
+                        <i class="fa-solid fa-rotate-left me-1"></i> Đặt lại
+                    </button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col text-end text-muted small fw-medium" id="totalInfoText">
+                    Đang nạp dữ liệu...
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Data Card -->
+        <div class="table-custom-container mb-4">
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;" class="text-center">ID</th>
+                            <th style="width: 120px;" class="text-center">Hình ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Ngành hàng</th>
+                            <th>Đơn giá</th>
+                            <th>Giảm giá</th>
+                            <th class="text-center">Tồn kho</th>
+                            <th class="text-center">Trạng thái</th>
+                            <th class="text-center" style="width: 170px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <tr>
+                            <td colspan="9" class="text-center py-5 text-muted">
+                                <div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải dữ liệu sản phẩm...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top bg-light-subtle">
+                <div id="paginationSummary" class="text-secondary small fw-medium"></div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0 gap-1" id="paginationNav"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Product -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="addProductForm" enctype="multipart/form-data">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-plus-circle me-1"></i> Thêm Sản Phẩm Mới</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="newProductName" class="form-label fw-bold">Tên Sản Phẩm <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="newProductName" name="productName" required placeholder="Ví dụ: iPhone 16 Pro Max">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="newCategoryId" class="form-label fw-bold">Danh Mục <span class="text-danger">*</span></label>
+                                <select class="form-select" id="newCategoryId" name="categoryId" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="newUnitPrice" class="form-label fw-bold">Đơn Giá (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="newUnitPrice" name="unitPrice" step="1000" min="0" required placeholder="25000000">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="newDiscount" class="form-label fw-bold">Giảm Giá (%)</label>
+                                <input type="number" class="form-control" id="newDiscount" name="discount" step="0.5" min="0" max="100" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="newQuantity" class="form-label fw-bold">Số Lượng <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="newQuantity" name="quantity" min="0" required value="10">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="newStatus" class="form-label fw-bold">Trạng Thái</label>
+                                <select class="form-select" id="newStatus" name="status">
+                                    <option value="1" selected>Đang bán</option>
+                                    <option value="0">Tạm ngưng</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="newImageFiles" class="form-label fw-bold">Tải lên nhiều file ảnh (3-4 ảnh)</label>
+                                <input type="file" class="form-control" id="newImageFiles" name="imageFiles" accept="image/*" multiple onchange="previewMultipleFiles(this, '#newImagesPreviewContainer')">
+                            </div>
+                            <div class="col-12">
+                                <label for="newImagesUrls" class="form-label fw-bold">Hoặc dán các link ảnh trực tiếp (từ CellphoneS, TheGioiDiDong... phân cách bởi dấu phẩy)</label>
+                                <textarea class="form-control" id="newImagesUrls" name="images" rows="2" placeholder="https://cdn.../anh1.png, https://cdn.../anh2.png, https://cdn.../anh3.png" oninput="previewUrlsInput(this.value, '#newImagesPreviewContainer')"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted mb-1">Xem trước các hình ảnh:</label>
+                                <div id="newImagesPreviewContainer" class="gallery-preview-container">
+                                    <span class="text-muted fst-italic small">Chưa chọn ảnh nào</span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="newDescription" class="form-label fw-bold">Mô Tả Sản Phẩm</label>
+                                <textarea class="form-control" id="newDescription" name="description" rows="3" placeholder="Nhập mô tả chi tiết tính năng, thông số kỹ thuật..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" id="btnAddSubmit">
+                            <i class="fa-solid fa-save me-1"></i> Thêm Mới
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sửa Product -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editProductForm" enctype="multipart/form-data">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title"><i class="fa-solid fa-pen-to-square me-1"></i> Cập Nhật Sản Phẩm</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editProductId" name="productId">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="editProductName" class="form-label fw-bold">Tên Sản Phẩm <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editProductName" name="productName" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editCategoryId" class="form-label fw-bold">Danh Mục <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editCategoryId" name="categoryId" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editUnitPrice" class="form-label fw-bold">Đơn Giá (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="editUnitPrice" name="unitPrice" step="1000" min="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editDiscount" class="form-label fw-bold">Giảm Giá (%)</label>
+                                <input type="number" class="form-control" id="editDiscount" name="discount" step="0.5" min="0" max="100">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editQuantity" class="form-label fw-bold">Số Lượng <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="editQuantity" name="quantity" min="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editStatus" class="form-label fw-bold">Trạng Thái</label>
+                                <select class="form-select" id="editStatus" name="status">
+                                    <option value="1">Đang bán</option>
+                                    <option value="0">Tạm ngưng</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="editImageFiles" class="form-label fw-bold">Tải lên ảnh mới (chọn nhiều ảnh)</label>
+                                <input type="file" class="form-control" id="editImageFiles" name="imageFiles" accept="image/*" multiple onchange="previewMultipleFiles(this, '#editImagesPreviewContainer')">
+                            </div>
+                            <div class="col-12">
+                                <label for="editImagesUrls" class="form-label fw-bold">Hoặc chỉnh sửa link ảnh trực tiếp (cách nhau bởi dấu phẩy)</label>
+                                <textarea class="form-control" id="editImagesUrls" name="images" rows="2" oninput="previewUrlsInput(this.value, '#editImagesPreviewContainer')"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted mb-1">Ảnh hiện tại / xem trước:</label>
+                                <div id="editImagesPreviewContainer" class="gallery-preview-container"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="editDescription" class="form-label fw-bold">Mô Tả Sản Phẩm</label>
+                                <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-warning" id="btnEditSubmit">
+                            <i class="fa-solid fa-check me-1"></i> Cập Nhật
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xem Chi Tiết Bộ Ảnh Carousel (Photo Gallery Slider) -->
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="galleryModalTitle"><i class="fa-regular fa-images me-2"></i>Bộ Sưu Tập Hình Ảnh Sản Phẩm</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center bg-light">
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators" id="carouselIndicators"></div>
+                        <div class="carousel-inner" id="carouselInner"></div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark p-3 rounded-circle"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark p-3 rounded-circle"></span>
+                        </button>
+                    </div>
+                    <div class="thumb-strip justify-content-center mt-3" id="galleryThumbnailsStrip"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery 3.6.4 & Bootstrap 5 Bundle JS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // State management
+        var currentPage = 0;
+        var pageSize = 5;
+        var currentKeyword = '';
+        var currentCategoryId = '';
+        var categoryList = [];
+        var loadedProducts = [];
+
+        $(document).ready(function() {
+            loadCategoriesList(function() {
+                loadProducts(0);
+            });
+
+            // Search on enter key
+            $('#searchKeyword').on('keypress', function(e) {
+                if (e.which === 13) {
+                    handleSearch();
+                }
+            });
+
+            // Submit Add Product Form via AJAX
+            $('#addProductForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $('#btnAddSubmit').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...');
+
+                $.ajax({
+                    url: '/api/product/addProduct',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#addProductModal').modal('hide');
+                        $('#addProductForm')[0].reset();
+                        $('#newImagesPreviewContainer').html('<span class="text-muted fst-italic small">Chưa chọn ảnh nào</span>');
+                        showToast(response.message || 'Thêm sản phẩm thành công!', 'bg-success');
+                        loadProducts(0);
+                    },
+                    error: function(xhr) {
+                        var msg = 'Thêm sản phẩm thất bại!';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        showToast(msg, 'bg-danger');
+                    },
+                    complete: function() {
+                        $('#btnAddSubmit').prop('disabled', false).html('<i class="fa-solid fa-save me-1"></i> Thêm Mới');
+                    }
+                });
+            });
+
+            // Submit Edit Product Form via AJAX
+            $('#editProductForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $('#btnEditSubmit').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang cập nhật...');
+
+                $.ajax({
+                    url: '/api/product/updateProduct',
+                    type: 'PUT',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#editProductModal').modal('hide');
+                        showToast(response.message || 'Cập nhật sản phẩm thành công!', 'bg-success');
+                        loadProducts(currentPage);
+                    },
+                    error: function(xhr) {
+                        var msg = 'Cập nhật sản phẩm thất bại!';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        showToast(msg, 'bg-danger');
+                    },
+                    complete: function() {
+                        $('#btnEditSubmit').prop('disabled', false).html('<i class="fa-solid fa-check me-1"></i> Cập Nhật');
+                    }
+                });
+            });
+        });
+
+        // Load Categories for dropdown selects
+        function loadCategoriesList(callback) {
+            $.ajax({
+                url: '/api/category',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var items = response.body || response;
+                    categoryList = items;
+
+                    var filterSelect = $('#filterCategorySelect');
+                    filterSelect.html('<option value="">-- Tất cả danh mục --</option>');
+
+                    var newSelect = $('#newCategoryId');
+                    newSelect.empty();
+
+                    var editSelect = $('#editCategoryId');
+                    editSelect.empty();
+
+                    for (var i = 0; i < items.length; i++) {
+                        var c = items[i];
+                        filterSelect.append('<option value="' + c.categoryId + '">' + escapeHtml(c.categoryName) + '</option>');
+                        newSelect.append('<option value="' + c.categoryId + '">' + escapeHtml(c.categoryName) + '</option>');
+                        editSelect.append('<option value="' + c.categoryId + '">' + escapeHtml(c.categoryName) + '</option>');
+                    }
+
+                    if (callback) callback();
+                },
+                error: function() {
+                    showToast('Lỗi khi nạp danh sách Category cho bộ lọc!', 'bg-danger');
+                }
+            });
+        }
+
+        // Load Products with Pagination, Category Filter & Search via AJAX
+        function loadProducts(page) {
+            currentPage = page;
+            pageSize = parseInt($('#pageSizeSelect').val());
+            currentKeyword = $('#searchKeyword').val().trim();
+            currentCategoryId = $('#filterCategorySelect').val();
+
+            var url = '/api/product/page?page=' + currentPage + '&size=' + pageSize + '&keyword=' + encodeURIComponent(currentKeyword);
+            if (currentCategoryId && currentCategoryId !== '') {
+                url += '&categoryId=' + currentCategoryId;
+            }
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var pageData = response.body || {};
+                    var items = pageData.content || (pageData.page && pageData.page.content) || [];
+                    loadedProducts = items;
+                    renderTable(items);
+                    renderPagination(pageData);
+                    updateKPIs();
+                },
+                error: function() {
+                    $('#productTableBody').html('<tr><td colspan="9" class="text-center text-danger py-4">Không thể kết nối tới máy chủ!</td></tr>');
+                    showToast('Lỗi khi nạp dữ liệu Product!', 'bg-danger');
+                }
+            });
+        }
+
+        // Helper: get list of image URLs from product
+        function getProductImages(product) {
+            if (product.imageList && product.imageList.length > 0) {
+                return product.imageList;
+            }
+            if (product.images && product.images.trim() !== '') {
+                return product.images.split(/[,;\n]+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+            }
+            return [];
+        }
+
+        function resolveImageUrl(img) {
+            if (!img) return '';
+            if (img.startsWith('http://') || img.startsWith('https://')) {
+                var idx = img.indexOf('/plain/https://');
+                if (idx !== -1) {
+                    return img.substring(idx + 7);
+                }
+                return img;
+            }
+            if (img.startsWith('/uploads/')) {
+                return img;
+            }
+            return '/uploads/' + img;
+        }
+
+        // Update KPI Metrics Cards
+        function updateKPIs() {
+            $.ajax({
+                url: '/api/product',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var allProds = response.body || [];
+                    $('#kpiTotalProducts').text(allProds.length);
+                    var activeCount = 0;
+                    var stockCount = 0;
+                    for (var i = 0; i < allProds.length; i++) {
+                        if (allProds[i].status === 1) activeCount++;
+                        stockCount += (allProds[i].quantity || 0);
+                    }
+                    $('#kpiActiveProducts').text(activeCount);
+                    $('#kpiTotalStock').text(stockCount.toLocaleString('vi-VN'));
+                }
+            });
+            $('#kpiTotalCategories').text(categoryList.length);
+        }
+
+        // Render Product Table Rows
+        function renderTable(items) {
+            var tbody = $('#productTableBody');
+            tbody.empty();
+
+            if (!items || items.length === 0) {
+                tbody.html('<tr><td colspan="9" class="text-center py-5 text-muted"><i class="fa-solid fa-inbox fa-2x mb-3 text-secondary d-block"></i>Không tìm thấy sản phẩm nào phù hợp</td></tr>');
+                return;
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                var p = items[i];
+                var imgList = getProductImages(p);
+                var imgGalleryHtml = '';
+
+                if (imgList.length > 0) {
+                    var mainUrl = resolveImageUrl(imgList[0]);
+                    var mainImg = '<img src="' + mainUrl + '" alt="product" class="main-thumb" onclick="openGallery(' + i + ', 0)" title="Bấm để phóng to xem bộ ảnh" onerror="this.onerror=null;this.src=\'https://placehold.co/62x62/f1f5f9/475569?text=SP\';">';
+                    
+                    var miniThumbs = '';
+                    for (var j = 0; j < Math.min(imgList.length, 4); j++) {
+                        var miniUrl = resolveImageUrl(imgList[j]);
+                        miniThumbs += '<img src="' + miniUrl + '" class="thumb-mini" onclick="openGallery(' + i + ', ' + j + ')" title="Ảnh ' + (j + 1) + '" onerror="this.onerror=null;this.src=\'https://placehold.co/22x22/f1f5f9/475569?text=.\';">';
+                    }
+
+                    var badgeCount = '<span class="badge bg-light text-secondary border rounded-pill mt-1" style="font-size: 10px; font-weight:600; cursor:pointer;" onclick="openGallery(' + i + ', 0)"><i class="fa-regular fa-images me-1 text-primary"></i>' + imgList.length + ' ảnh</span>';
+
+                    imgGalleryHtml = '<div class="d-flex flex-column align-items-center">' +
+                                        mainImg +
+                                        '<div class="thumb-strip">' + miniThumbs + '</div>' +
+                                        badgeCount +
+                                     '</div>';
+                } else {
+                    imgGalleryHtml = '<div class="d-inline-flex align-items-center justify-content-center bg-light text-muted border rounded-3" style="width:62px;height:62px;"><i class="fa-solid fa-image"></i></div>';
+                }
+
+                var cateName = p.category ? p.category.categoryName : 'Chưa gán';
+                var formattedPrice = Number(p.unitPrice).toLocaleString('vi-VN') + ' đ';
+                var discountBadge = p.discount > 0 ? '<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill fw-bold px-2 py-1">-' + p.discount + '%</span>' : '<span class="text-muted small">-</span>';
+                var statusBadge = p.status === 1 ? '<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 fw-semibold"><i class="fa-solid fa-circle text-success me-1" style="font-size: 6px;"></i>Đang bán</span>' : '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 fw-semibold"><i class="fa-solid fa-circle text-secondary me-1" style="font-size: 6px;"></i>Tạm ngưng</span>';
+                var quantityBadge = p.quantity > 10 ? '<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 fw-semibold">' + p.quantity + ' sp</span>' : (p.quantity > 0 ? '<span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 fw-semibold">' + p.quantity + ' sp</span>' : '<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 fw-semibold">Hết hàng</span>');
+
+                var row = $('<tr>');
+                row.append('<td class="text-center"><span class="badge bg-light text-primary border rounded-pill px-2 py-1 fw-bold">#' + p.productId + '</span></td>');
+                row.append('<td class="text-center">' + imgGalleryHtml + '</td>');
+                row.append('<td><div class="fw-bold text-dark" style="font-size: 0.94rem;">' + escapeHtml(p.productName) + '</div><div class="text-muted small text-truncate" style="max-width: 260px;">' + escapeHtml(p.description || '') + '</div></td>');
+                row.append('<td><span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 fw-semibold"><i class="fa-solid fa-tag me-1 small"></i>' + escapeHtml(cateName) + '</span></td>');
+                row.append('<td><div class="fw-bold text-danger fs-6">' + formattedPrice + '</div></td>');
+                row.append('<td>' + discountBadge + '</td>');
+                row.append('<td class="text-center">' + quantityBadge + '</td>');
+                row.append('<td class="text-center">' + statusBadge + '</td>');
+                row.append('<td class="text-center">' +
+                    '<button class="btn btn-outline-primary btn-sm rounded-pill px-2.5 py-1 me-1 shadow-sm fw-semibold" onclick="showEditModal(' + p.productId + ')" title="Chỉnh sửa">' +
+                        '<i class="fa-solid fa-pen-to-square me-1"></i>Sửa' +
+                    '</button>' +
+                    '<button class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-1 shadow-sm fw-semibold" onclick="deleteProduct(' + p.productId + ', \'' + escapeHtml(p.productName) + '\')" title="Xóa sản phẩm">' +
+                        '<i class="fa-solid fa-trash-can me-1"></i>Xóa' +
+                    '</button>' +
+                '</td>');
+
+                tbody.append(row);
+            }
+        }
+
+        // Open Gallery Modal Slider
+        function openGallery(productIndex, activeSlide) {
+            var p = loadedProducts[productIndex];
+            if (!p) return;
+            var imgList = getProductImages(p);
+            if (imgList.length === 0) return;
+
+            $('#galleryModalTitle').html('<i class="fa-regular fa-images me-2"></i>Bộ ảnh: <strong>' + escapeHtml(p.productName) + '</strong> (' + imgList.length + ' ảnh)');
+
+            var indicators = $('#carouselIndicators');
+            var inner = $('#carouselInner');
+            var strip = $('#galleryThumbnailsStrip');
+            indicators.empty();
+            inner.empty();
+            strip.empty();
+
+            for (var i = 0; i < imgList.length; i++) {
+                var url = resolveImageUrl(imgList[i]);
+                var activeClass = (i === activeSlide) ? 'active' : '';
+
+                indicators.append('<button type="button" data-bs-target="#productCarousel" data-bs-slide-to="' + i + '" class="' + activeClass + '"></button>');
+
+                inner.append('<div class="carousel-item ' + activeClass + '">' +
+                    '<img src="' + url + '" class="d-block w-100 p-2" alt="Ảnh ' + (i + 1) + '">' +
+                '</div>');
+
+                strip.append('<img src="' + url + '" class="gallery-preview-img" style="cursor:pointer; ' + (i === activeSlide ? 'border: 2px solid #0d6efd;' : '') + '" onclick="$(\'#productCarousel\').carousel(' + i + ')">');
+            }
+
+            var modal = new bootstrap.Modal(document.getElementById('galleryModal'));
+            modal.show();
+        }
+
+        // Render Pagination Controls
+        function renderPagination(pageData) {
+            var nav = $('#paginationNav');
+            nav.empty();
+
+            var totalPages = pageData.totalPages !== undefined ? pageData.totalPages : (pageData.page ? pageData.page.totalPages : 1);
+            var totalElements = pageData.totalElements !== undefined ? pageData.totalElements : (pageData.page ? pageData.page.totalElements : 0);
+            var cur = pageData.number !== undefined ? pageData.number : (pageData.page ? pageData.page.number : 0);
+
+            $('#totalInfoText').text('Tổng cộng: ' + totalElements + ' sản phẩm');
+            $('#paginationSummary').text('Trang ' + (totalPages === 0 ? 0 : cur + 1) + ' / ' + totalPages + ' (Tổng số ' + totalElements + ' bản ghi)');
+
+            if (totalPages <= 1) return;
+
+            // First & Prev
+            nav.append('<li class="page-item ' + (cur === 0 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadProducts(0)"><i class="fa-solid fa-angles-left"></i></a></li>');
+            nav.append('<li class="page-item ' + (cur === 0 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadProducts(' + (cur - 1) + ')"><i class="fa-solid fa-angle-left"></i></a></li>');
+
+            // Page numbers
+            var startPage = Math.max(0, cur - 2);
+            var endPage = Math.min(totalPages - 1, cur + 2);
+
+            for (var p = startPage; p <= endPage; p++) {
+                nav.append('<li class="page-item ' + (p === cur ? 'active' : '') + '">' +
+                    '<a class="page-link" onclick="loadProducts(' + p + ')">' + (p + 1) + '</a></li>');
+            }
+
+            // Next & Last
+            nav.append('<li class="page-item ' + (cur >= totalPages - 1 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadProducts(' + (cur + 1) + ')"><i class="fa-solid fa-angle-right"></i></a></li>');
+            nav.append('<li class="page-item ' + (cur >= totalPages - 1 ? 'disabled' : '') + '">' +
+                '<a class="page-link" onclick="loadProducts(' + (totalPages - 1) + ')"><i class="fa-solid fa-angles-right"></i></a></li>');
+        }
+
+        // Search Handlers
+        function handleSearch() {
+            loadProducts(0);
+        }
+
+        function resetSearch() {
+            $('#searchKeyword').val('');
+            $('#filterCategorySelect').val('');
+            loadProducts(0);
+        }
+
+        function changePageSize() {
+            loadProducts(0);
+        }
+
+        // Open Add Modal
+        function showAddModal() {
+            $('#addProductForm')[0].reset();
+            $('#newImagesPreviewContainer').html('<span class="text-muted fst-italic small">Chưa chọn ảnh nào</span>');
+            $('#addProductModal').modal('show');
+        }
+
+        // Open Edit Modal & Fetch Data via AJAX
+        function showEditModal(id) {
+            $.ajax({
+                url: '/api/product/' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status && response.body) {
+                        var p = response.body;
+                        $('#editProductId').val(p.productId);
+                        $('#editProductName').val(p.productName);
+                        $('#editUnitPrice').val(p.unitPrice);
+                        $('#editDiscount').val(p.discount);
+                        $('#editQuantity').val(p.quantity);
+                        $('#editStatus').val(p.status);
+                        $('#editDescription').val(p.description || '');
+                        $('#editImagesUrls').val(p.images || '');
+
+                        if (p.category && p.category.categoryId) {
+                            $('#editCategoryId').val(p.category.categoryId);
+                        }
+
+                        // Preview current images
+                        var imgList = getProductImages(p);
+                        var container = $('#editImagesPreviewContainer');
+                        container.empty();
+
+                        if (imgList.length > 0) {
+                            for (var i = 0; i < imgList.length; i++) {
+                                var url = resolveImageUrl(imgList[i]);
+                                container.append('<img src="' + url + '" class="gallery-preview-img shadow-sm" title="Ảnh ' + (i + 1) + '">');
+                            }
+                        } else {
+                            container.html('<span class="text-muted fst-italic small">Chưa có ảnh nào</span>');
+                        }
+
+                        $('#editImageFiles').val('');
+                        $('#editProductModal').modal('show');
+                    } else {
+                        showToast('Không tìm thấy sản phẩm!', 'bg-danger');
+                    }
+                },
+                error: function() {
+                    showToast('Lỗi khi lấy thông tin sản phẩm!', 'bg-danger');
+                }
+            });
+        }
+
+        // Delete Product via AJAX
+        function deleteProduct(id, name) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm: "' + name + '" (ID: ' + id + ') không?')) {
+                $.ajax({
+                    url: '/api/product/deleteProduct?productId=' + id,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function(response) {
+                        showToast(response.message || 'Xóa sản phẩm thành công!', 'bg-success');
+                        loadProducts(currentPage);
+                    },
+                    error: function(xhr) {
+                        var msg = 'Xóa sản phẩm thất bại!';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        showToast(msg, 'bg-danger');
+                    }
+                });
+            }
+        }
+
+        // Preview multiple files on selection
+        function previewMultipleFiles(input, containerSelector) {
+            var container = $(containerSelector);
+            container.empty();
+
+            if (input.files && input.files.length > 0) {
+                for (var i = 0; i < input.files.length; i++) {
+                    (function(file) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            container.append('<img src="' + e.target.result + '" class="gallery-preview-img shadow-sm" title="' + file.name + '">');
+                        };
+                        reader.readAsDataURL(file);
+                    })(input.files[i]);
+                }
+            } else {
+                container.html('<span class="text-muted fst-italic small">Chưa chọn ảnh nào</span>');
+            }
+        }
+
+        // Preview images from comma-separated URL input
+        function previewUrlsInput(val, containerSelector) {
+            var container = $(containerSelector);
+            if (!val || val.trim() === '') {
+                container.html('<span class="text-muted fst-italic small">Chưa chọn ảnh nào</span>');
+                return;
+            }
+            container.empty();
+            var urls = val.split(/[,;\n]+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+            for (var i = 0; i < urls.length; i++) {
+                container.append('<img src="' + urls[i] + '" class="gallery-preview-img shadow-sm" onerror="this.onerror=null;this.src=\'https://placehold.co/70x70/e9ecef/495057?text=Error\';">');
+            }
+        }
+
+        // Toast Helper
+        function showToast(message, bgClass) {
+            var toastEl = $('#liveToast');
+            toastEl.removeClass('bg-success bg-danger bg-warning bg-info').addClass(bgClass);
+            $('#toastMessage').text(message);
+            var toast = new bootstrap.Toast(toastEl[0]);
+            toast.show();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
