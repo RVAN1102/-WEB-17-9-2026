@@ -15,112 +15,182 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --bs-font-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --surface-card: #ffffff;
-            --border-color: #e2e8f0;
+            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50:  #f8fafc;
         }
         body {
-            font-family: var(--bs-font-sans-serif);
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: var(--font-sans);
+            background-color: var(--slate-50);
+            color: var(--slate-800);
             min-height: 100vh;
+            font-feature-settings: 'tnum' 1, 'cv05' 1;
+            -webkit-font-smoothing: antialiased;
         }
         .navbar-custom {
-            background: #0f172a;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background-color: var(--slate-900);
+            border-bottom: 1px solid #1e293b;
+            padding: 0.75rem 0;
         }
         .navbar-brand {
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: -0.02em;
             color: #ffffff !important;
+            font-size: 1.05rem;
+        }
+        .brand-icon-box {
+            width: 32px;
+            height: 32px;
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
         }
         .nav-link {
             font-weight: 500;
-            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--slate-400) !important;
             padding: 6px 14px !important;
-            transition: all 0.2s ease;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+        .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.05);
         }
         .nav-link.active {
-            background-color: rgba(37, 99, 235, 0.2);
-            color: #60a5fa !important;
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08);
             font-weight: 600;
         }
-        .nav-link:hover:not(.active) {
-            background-color: rgba(255,255,255,0.06);
-            color: #f1f5f9 !important;
-        }
-        .dashboard-card {
+        /* Operational Metrics Strip */
+        .metric-strip-card {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-        }
-        .kpi-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px 20px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .kpi-icon {
-            width: 48px;
-            height: 48px;
+            border: 1px solid var(--slate-200);
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            padding: 16px 20px;
         }
-        .table-custom-container {
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+        .metric-item {
+            padding: 4px 20px;
+            border-right: 1px solid var(--slate-100);
         }
-        .table-custom thead th {
-            background-color: #f8fafc;
-            color: #64748b;
-            font-size: 0.75rem;
-            font-weight: 700;
+        .metric-item:last-child {
+            border-right: none;
+        }
+        @media (max-width: 768px) {
+            .metric-item {
+                border-right: none;
+                border-bottom: 1px solid var(--slate-100);
+                padding-bottom: 12px;
+                margin-bottom: 8px;
+            }
+            .metric-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+        }
+        .metric-label {
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 14px 16px;
+            color: var(--slate-500);
+            margin-bottom: 4px;
+        }
+        .metric-value {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: var(--slate-900);
+            font-feature-settings: 'tnum' 1;
+        }
+        .metric-context {
+            font-size: 11.5px;
+            color: var(--slate-400);
+            margin-top: 2px;
+        }
+        /* Filter & Search Toolbar */
+        .filter-toolbar {
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            padding: 14px 18px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+        }
+        .form-control, .form-select {
+            border-radius: 7px;
+            border-color: #cbd5e1;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            color: var(--slate-800);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--slate-800);
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+        }
+        /* Data Table Container */
+        .table-custom-container {
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+        }
+        .table-custom {
+            margin-bottom: 0;
+        }
+        .table-custom thead th {
+            background-color: var(--slate-50);
+            color: var(--slate-500);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--slate-200);
+            padding: 12px 14px;
             white-space: nowrap;
         }
         .table-custom tbody td {
-            padding: 14px 16px;
+            padding: 12px 14px;
             vertical-align: middle;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--slate-100);
+            font-size: 13.5px;
         }
         .table-custom tbody tr:hover {
-            background-color: #f8fafc;
+            background-color: #fafbfd;
         }
         .table-custom tbody tr:last-child td {
             border-bottom: none;
         }
+        /* Category Icon */
         .category-icon-box {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
-            background-color: #f1f5f9;
-            border: 1px solid #e2e8f0;
+            width: 44px;
+            height: 44px;
+            border-radius: 7px;
+            background-color: #ffffff;
+            border: 1px solid var(--slate-200);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 6px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 5px;
+            transition: all 0.15s ease;
         }
         .category-icon-box:hover {
-            transform: scale(1.08);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            border-color: var(--slate-900);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
         }
         .category-icon-box img {
             max-width: 100%;
@@ -128,42 +198,73 @@
             object-fit: contain;
         }
         .preview-box {
-            max-width: 80px;
-            max-height: 80px;
-            border-radius: 10px;
-            border: 1px dashed #cbd5e1;
-            padding: 4px;
+            max-width: 64px;
+            max-height: 64px;
+            border-radius: 7px;
+            border: 1px dashed var(--slate-200);
+            padding: 3px;
             display: none;
         }
+        /* Action Buttons */
+        .btn-action-edit {
+            color: var(--slate-700);
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+        .btn-action-edit:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-900);
+            color: var(--slate-900);
+        }
+        .btn-action-delete {
+            color: #dc2626;
+            background: #ffffff;
+            border: 1px solid #fecaca;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+        .btn-action-delete:hover {
+            background: #fef2f2;
+            border-color: #dc2626;
+            color: #b91c1c;
+        }
+        /* Modal & Form Ergonomics */
         .modal-content {
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 12px;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
             overflow: hidden;
         }
-        .form-control, .form-select {
-            border-radius: 8px;
-            border-color: #cbd5e1;
-            padding: 0.55rem 0.85rem;
-            font-size: 0.92rem;
+        .modal-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--slate-100);
+            background-color: #ffffff;
         }
-        .form-control:focus, .form-select:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--slate-900);
         }
     </style>
 </head>
 <body>
 
     <!-- Header Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4 shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
         <div class="container-fluid px-4">
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <div class="bg-primary text-white rounded-3 p-2 me-2 d-inline-flex align-items-center justify-content-center" style="width:34px;height:34px;">
-                    <i class="fa-solid fa-bag-shopping" style="font-size: 16px;"></i>
+                <div class="brand-icon-box me-2.5">
+                    <i class="fa-solid fa-bag-shopping"></i>
                 </div>
                 <span>BaVan Shop</span>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill ms-2 fw-semibold" style="font-size: 11px;">Admin</span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -171,19 +272,14 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/admin/categories"><i class="fa-solid fa-tags me-1.5"></i> Quản lý Danh mục</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="/admin/products"><i class="fa-solid fa-boxes-stacked me-1.5"></i> Quản lý Sản phẩm</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/categories"><i class="fa-solid fa-tags me-1.5"></i> Quản lý Danh mục</a>
+                    </li>
                 </ul>
-                <div class="d-flex gap-2">
-                    <a href="/swagger-ui.html" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                        <i class="fa-solid fa-code me-1 text-success"></i> Swagger 3 UI
-                    </a>
-                    <a href="/h2-console" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                        <i class="fa-solid fa-database me-1 text-warning"></i> H2 Console
-                    </a>
+                <div class="d-none d-md-flex align-items-center text-slate-400 small gap-2">
+                    <span class="badge bg-slate-800 text-slate-300 border border-secondary border-opacity-25 px-2.5 py-1 rounded-2 fw-medium">Khu vực Quản trị</span>
                 </div>
             </div>
         </div>
@@ -204,80 +300,66 @@
         <!-- Page Header -->
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
             <div>
-                <h3 class="fw-bold text-dark mb-1 d-flex align-items-center">
-                    <i class="fa-solid fa-folder-tree text-primary me-2"></i>Quản lý Danh mục
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.35rem; letter-spacing: -0.02em;">
+                    Quản lý Danh mục
                 </h3>
-                <p class="text-secondary mb-0 small">Phân loại và cấu hình nhóm ngành hàng kinh doanh của cửa hàng</p>
+                <p class="text-secondary mb-0 small">Cấu hình phân loại ngành hàng kinh doanh của cửa hàng</p>
             </div>
             <div>
-                <button class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm" onclick="showAddModal()">
+                <button class="btn btn-dark rounded-2 px-3.5 py-2 fw-semibold shadow-sm" onclick="showAddModal()">
                     <i class="fa-solid fa-plus me-1.5"></i> Thêm Danh Mục Mới
                 </button>
             </div>
         </div>
 
-        <!-- KPI Metrics Summary Row -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="kpi-card">
-                    <div class="kpi-icon bg-primary-subtle text-primary">
-                        <i class="fa-solid fa-folder-tree"></i>
-                    </div>
-                    <div>
-                        <div class="text-secondary small fw-medium">Tổng Danh Mục</div>
-                        <div class="fs-4 fw-bold text-dark" id="kpiTotalCategories">--</div>
-                    </div>
+        <!-- Operational Metrics Strip -->
+        <div class="metric-strip-card mb-4">
+            <div class="row g-0">
+                <div class="col-md-4 metric-item">
+                    <div class="metric-label">Tổng Danh Mục</div>
+                    <div class="metric-value" id="kpiTotalCategories">--</div>
+                    <div class="metric-context">Ngành hàng đang quản lý</div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="kpi-card">
-                    <div class="kpi-icon bg-success-subtle text-success">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div>
-                        <div class="text-secondary small fw-medium">Đang Hoạt Động</div>
-                        <div class="fs-4 fw-bold text-dark" id="kpiActiveCategories">--</div>
-                    </div>
+                <div class="col-md-4 metric-item">
+                    <div class="metric-label">Đang Hoạt Động</div>
+                    <div class="metric-value text-emerald-600" id="kpiActiveCategories">--</div>
+                    <div class="metric-context">Sẵn sàng phân loại sản phẩm</div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="kpi-card">
-                    <div class="kpi-icon bg-purple-subtle text-purple" style="background-color: #f3e8ff; color: #9333ea;">
-                        <i class="fa-solid fa-icons"></i>
-                    </div>
-                    <div>
-                        <div class="text-secondary small fw-medium">Biểu Tượng Đã Cấu Hình</div>
-                        <div class="fs-4 fw-bold text-dark" id="kpiIconCategories">--</div>
-                    </div>
+                <div class="col-md-4 metric-item">
+                    <div class="metric-label">Biểu Tượng Đã Cấu Hình</div>
+                    <div class="metric-value" id="kpiIconCategories">--</div>
+                    <div class="metric-context">Đã gắn biểu tượng nhận diện</div>
                 </div>
             </div>
         </div>
 
-        <!-- Filter & Search Toolbar Card -->
-        <div class="dashboard-card p-3 mb-4">
-            <div class="row g-3 align-items-center">
+        <!-- Filter & Search Toolbar -->
+        <div class="filter-toolbar mb-4">
+            <div class="row g-2.5 align-items-center">
                 <div class="col-md-6 col-lg-5">
-                    <div class="input-group">
+                    <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input type="text" id="searchKeyword" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm theo tên danh mục..." autocomplete="off">
-                        <button class="btn btn-primary rounded-end-3 px-3" type="button" onclick="handleSearch()">Tìm kiếm</button>
                     </div>
                 </div>
                 <div class="col-md-3 col-lg-2">
-                    <select id="pageSizeSelect" class="form-select" onchange="changePageSize()">
+                    <select id="pageSizeSelect" class="form-select form-select-sm" onchange="changePageSize()">
                         <option value="3">3 mục / trang</option>
                         <option value="5" selected>5 mục / trang</option>
                         <option value="10">10 mục / trang</option>
                     </select>
                 </div>
-                <div class="col-md-3 col-lg-5 d-flex gap-2 justify-content-between align-items-center">
-                    <button class="btn btn-outline-secondary rounded-pill px-3" type="button" onclick="resetSearch()">
-                        <i class="fa-solid fa-rotate-left me-1"></i> Đặt lại
+                <div class="col-md-3 col-lg-5 d-flex gap-2 justify-content-end align-items-center">
+                    <button class="btn btn-dark btn-sm rounded-2 px-3" type="button" onclick="handleSearch()">
+                        <i class="fa-solid fa-filter me-1"></i> Tìm kiếm
                     </button>
-                    <div class="text-secondary small fw-medium" id="totalInfoText">
-                        Đang nạp dữ liệu...
-                    </div>
+                    <button class="btn btn-outline-secondary btn-sm rounded-2 px-2.5" type="button" onclick="resetSearch()" title="Đặt lại bộ lọc">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
                 </div>
+            </div>
+            <div class="mt-2 text-end text-muted small" id="totalInfoText" style="font-size: 12px;">
+                Đang nạp dữ liệu...
             </div>
         </div>
 
@@ -287,16 +369,16 @@
                 <table class="table table-custom table-hover align-middle mb-0">
                     <thead>
                         <tr>
-                            <th style="width: 80px;" class="text-center">ID</th>
-                            <th style="width: 120px;" class="text-center">Biểu tượng</th>
+                            <th style="width: 60px;" class="text-center">ID</th>
+                            <th style="width: 80px;" class="text-center">Biểu tượng</th>
                             <th>Tên danh mục</th>
-                            <th class="text-center" style="width: 180px;">Thao tác</th>
+                            <th class="text-center" style="width: 150px;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="categoryTableBody">
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
-                                <div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải dữ liệu qua AJAX...
+                                <div class="spinner-border spinner-border-sm text-secondary me-2"></div> Đang tải dữ liệu danh mục...
                             </td>
                         </tr>
                     </tbody>
@@ -305,9 +387,9 @@
 
             <!-- Pagination Bar -->
             <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light-subtle">
-                <div id="paginationSummary" class="text-muted small fw-medium"></div>
+                <div id="paginationSummary" class="text-secondary small fw-medium"></div>
                 <nav>
-                    <ul class="pagination pagination-sm mb-0" id="paginationNav"></ul>
+                    <ul class="pagination pagination-sm mb-0 gap-1" id="paginationNav"></ul>
                 </nav>
             </div>
         </div>
@@ -315,30 +397,30 @@
 
     <!-- Modal Thêm Category -->
     <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form id="addCategoryForm" enctype="multipart/form-data">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title"><i class="fa-solid fa-plus-circle me-1"></i> Thêm Category Mới</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa-regular fa-square-plus me-2 text-primary"></i>Thêm Danh Mục Mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
                         <div class="mb-3">
-                            <label for="newCategoryName" class="form-label fw-bold">Tên Danh Mục <span class="text-danger">*</span></label>
+                            <label for="newCategoryName" class="form-label fw-semibold small">Tên Danh Mục <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="newCategoryName" name="categoryName" required placeholder="Ví dụ: Thiết bị thông minh">
                         </div>
                         <div class="mb-3">
-                            <label for="newIconFile" class="form-label fw-bold">File Icon / Hình ảnh</label>
+                            <label for="newIconFile" class="form-label fw-semibold small">Tệp Biểu tượng / Icon</label>
                             <input type="file" class="form-control" id="newIconFile" name="icon" accept="image/*" onchange="previewSelectedImage(this, '#newIconPreview')">
-                            <div class="mt-2 text-center">
-                                <img id="newIconPreview" class="preview-box" alt="Icon Preview">
+                            <div class="mt-2.5 text-center">
+                                <img id="newIconPreview" class="preview-box mx-auto" alt="Icon Preview">
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary" id="btnAddSubmit">
-                            <i class="fa-solid fa-save me-1"></i> Thêm Mới
+                    <div class="modal-footer border-top bg-light-subtle px-4 py-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-2" data-bs-dismiss="modal">Hủy bỏ</button>
+                        <button type="submit" class="btn btn-dark btn-sm px-4 rounded-2 fw-semibold" id="btnAddSubmit">
+                            Thêm Mới
                         </button>
                     </div>
                 </form>
@@ -348,36 +430,35 @@
 
     <!-- Modal Sửa Category -->
     <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form id="editCategoryForm" enctype="multipart/form-data">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title"><i class="fa-solid fa-pen-to-square me-1"></i> Cập Nhật Category</h5>
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa-regular fa-pen-to-square me-2 text-primary"></i>Cập Nhật Danh Mục</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
                         <input type="hidden" id="editCategoryId" name="categoryId">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Category ID</label>
-                            <input type="text" class="form-control bg-light" id="displayCategoryId" readonly>
+                            <label class="form-label fw-semibold small">Mã Danh Mục (ID)</label>
+                            <input type="text" class="form-control bg-light text-muted" id="displayCategoryId" readonly>
                         </div>
                         <div class="mb-3">
-                            <label for="editCategoryName" class="form-label fw-bold">Tên Danh Mục <span class="text-danger">*</span></label>
+                            <label for="editCategoryName" class="form-label fw-semibold small">Tên Danh Mục <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="editCategoryName" name="categoryName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editIconFile" class="form-label fw-bold">Chọn Icon mới (để trống nếu giữ nguyên)</label>
+                            <label for="editIconFile" class="form-label fw-semibold small">Thay đổi biểu tượng (để trống nếu giữ nguyên)</label>
                             <input type="file" class="form-control" id="editIconFile" name="icon" accept="image/*" onchange="previewSelectedImage(this, '#editIconPreview')">
-                            <div class="mt-2 text-center">
-                                <p class="small text-muted mb-1">Ảnh hiện tại / xem trước:</p>
-                                <img id="editIconPreview" class="preview-box" alt="Icon Preview">
+                            <div class="mt-2.5 text-center">
+                                <img id="editIconPreview" class="preview-box mx-auto" alt="Icon Preview">
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-warning" id="btnEditSubmit">
-                            <i class="fa-solid fa-check me-1"></i> Cập Nhật
+                    <div class="modal-footer border-top bg-light-subtle px-4 py-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-2" data-bs-dismiss="modal">Hủy bỏ</button>
+                        <button type="submit" class="btn btn-dark btn-sm px-4 rounded-2 fw-semibold" id="btnEditSubmit">
+                            Lưu Thay Đổi
                         </button>
                     </div>
                 </form>
@@ -522,7 +603,7 @@
             tbody.empty();
 
             if (!items || items.length === 0) {
-                tbody.html('<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fa-solid fa-inbox fa-2x mb-3 text-secondary d-block"></i>Không tìm thấy danh mục nào phù hợp</td></tr>');
+                tbody.html('<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fa-regular fa-folder-open fa-2x mb-2 text-secondary opacity-50 d-block"></i>Không tìm thấy danh mục nào phù hợp</td></tr>');
                 return;
             }
 
@@ -539,21 +620,21 @@
                     } else if (!imgSrc.startsWith('/uploads/')) {
                         imgSrc = '/uploads/' + imgSrc;
                     }
-                    iconHtml = '<div class="category-icon-box mx-auto"><img src="' + imgSrc + '" alt="icon" onerror="this.onerror=null;this.src=\'https://placehold.co/56x56/f1f5f9/475569?text=Icon\';"></div>';
+                    iconHtml = '<div class="category-icon-box mx-auto"><img src="' + imgSrc + '" alt="icon" onerror="this.onerror=null;this.src=\'https://placehold.co/44x44/f8fafc/475569?text=Icon\';"></div>';
                 } else {
-                    iconHtml = '<div class="category-icon-box mx-auto text-muted"><i class="fa-solid fa-folder"></i></div>';
+                    iconHtml = '<div class="category-icon-box mx-auto text-muted"><i class="fa-regular fa-folder"></i></div>';
                 }
 
                 var row = $('<tr>');
-                row.append('<td class="text-center"><span class="badge bg-light text-primary border rounded-pill px-2.5 py-1 fw-bold">#' + item.categoryId + '</span></td>');
+                row.append('<td class="text-center text-muted font-monospace" style="font-size: 12.5px;">' + item.categoryId + '</td>');
                 row.append('<td class="text-center">' + iconHtml + '</td>');
-                row.append('<td><div class="fw-bold text-dark" style="font-size: 0.95rem;">' + escapeHtml(item.categoryName) + '</div><div class="text-secondary small">Mã định danh hệ thống: CAT-' + item.categoryId + '</div></td>');
-                row.append('<td class="text-center">' +
-                    '<button class="btn btn-outline-primary btn-sm rounded-pill px-2.5 py-1 me-1 shadow-sm fw-semibold" onclick="showEditModal(' + item.categoryId + ')" title="Chỉnh sửa">' +
-                        '<i class="fa-solid fa-pen-to-square me-1"></i>Sửa' +
+                row.append('<td><div class="fw-semibold text-slate-900" style="font-size: 13.5px;">' + escapeHtml(item.categoryName) + '</div></td>');
+                row.append('<td class="text-center text-nowrap">' +
+                    '<button class="btn btn-action-edit btn-sm me-1.5" onclick="showEditModal(' + item.categoryId + ')" title="Chỉnh sửa">' +
+                        '<i class="fa-regular fa-pen-to-square me-1"></i>Sửa' +
                     '</button>' +
-                    '<button class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-1 shadow-sm fw-semibold" onclick="deleteCategory(' + item.categoryId + ', \'' + escapeHtml(item.categoryName) + '\')" title="Xóa danh mục">' +
-                        '<i class="fa-solid fa-trash-can me-1"></i>Xóa' +
+                    '<button class="btn btn-action-delete btn-sm" onclick="deleteCategory(' + item.categoryId + ', \'' + escapeHtml(item.categoryName) + '\')" title="Xóa">' +
+                        '<i class="fa-regular fa-trash-can me-1"></i>Xóa' +
                     '</button>' +
                 '</td>');
 
